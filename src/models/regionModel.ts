@@ -30,11 +30,9 @@ export class Region {
     @Prop({ required: true })
     name!: string;
 
+    @Prop({ required: true, type: () => [Number] })
+    coordinates: [number, number];
+
     @Prop({ ref: () => User, required: true })
     user: Ref<User>;
-
-    // constructor(args: { name: string; user: Ref<User>; }) {
-    //     this.name = args.name;
-    //     this.user = args.user;
-    // }
 }
