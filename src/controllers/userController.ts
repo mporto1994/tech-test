@@ -30,7 +30,11 @@ export async function getUserById(req: Request, res: Response) {
 
 export async function createUser(req: Request, res: Response) {
     const { name, email, address, coordinates } = req.body;
-
+    console.log(req.body);
+    console.log(name);
+    console.log(email);
+    console.log(address);
+    console.log(coordinates);
     try {
         const newUser = await UserModel.create({ name, email, address, coordinates });
         res.status(201).json(newUser);
