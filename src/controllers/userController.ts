@@ -1,9 +1,27 @@
 import { Request, Response } from 'express';
-import { UserModel } from '../models';
+import * as UserService from '../services/userService';
+
+export async function createUser(req: Request, res: Response) {
+    try {
+        console.log("controller");
+        console.log(req.body);
+        const { name, email, address, coordinates } = req.body;
+
+        if (!name || !email) {
+            return res.status(400).json({ message: 'Name and email are required' });
+        }
+        console.log(name, email, address, coordinates);
+        const newUser = await UserService.createUser(name, email, address, coordinates);
+        res.status(201).json(newUser);
+    } catch (error) {
+        console.error('Erro ao criar usuário:', error);
+        res.status(500).send('Erro interno do servidor');
+    }
+}
 
 export async function getAllUsers(req: Request, res: Response) {
     try {
-        const users = await UserModel.find();
+        const users = await UserService.getAllUsers();
         res.status(200).json(users);
     } catch (error) {
         console.error('Erro ao buscar usuários:', error);
@@ -15,7 +33,7 @@ export async function getUserById(req: Request, res: Response) {
     const userId = req.params.id;
 
     try {
-        const user = await UserModel.findById(userId);
+        const user = await UserService.getUserById(userId);
 
         if (!user) {
             return res.status(404).json({ message: 'Usuário não encontrado' });
@@ -28,28 +46,12 @@ export async function getUserById(req: Request, res: Response) {
     }
 }
 
-export async function createUser(req: Request, res: Response) {
-    const { name, email, address, coordinates } = req.body;
-
-    try {
-        const newUser = await UserModel.create({ name, email, address, coordinates });
-        res.status(201).json(newUser);
-    } catch (error) {
-        console.error('Erro ao criar usuário:', error);
-        res.status(500).send('Erro interno do servidor');
-    }
-}
-
 export async function updateUserById(req: Request, res: Response) {
     const userId = req.params.id;
     const { name, email, address, coordinates } = req.body;
 
     try {
-        const updatedUser = await UserModel.findByIdAndUpdate(
-            userId,
-            { name, email, address, coordinates },
-            { new: true }
-        );
+        const updatedUser = await UserService.updateUserById(userId, name, email, address, coordinates);
 
         if (!updatedUser) {
             return res.status(404).json({ message: 'Usuário não encontrado' });
@@ -66,7 +68,7 @@ export async function deleteUserById(req: Request, res: Response) {
     const userId = req.params.id;
 
     try {
-        const deletedUser = await UserModel.findByIdAndDelete(userId);
+        const deletedUser = await UserService.deleteUserById(userId);
 
         if (!deletedUser) {
             return res.status(404).json({ message: 'Usuário não encontrado' });
