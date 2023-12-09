@@ -6,6 +6,7 @@ import userRouter from './routes/user.routes';
 dotenv.config();
 
 const app = express();
+app.use(express.json());
 
 app.get('/', (req, res) => {
     res.send('Welcome to OzMap Tech Test API! Pleas use one of the routes: /api/users, /api/regions');
