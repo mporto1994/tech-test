@@ -33,8 +33,6 @@ export class Region {
     @Prop({ ref: () => User, required: true })
     user: Ref<User>;
 
-    // constructor(args: { name: string; user: Ref<User>; }) {
-    //     this.name = args.name;
-    //     this.user = args.user;
-    // }
+    @Prop({ type: () => [Number], index: '2dsphere', required: true })
+    coordinates: [number, number];
 }

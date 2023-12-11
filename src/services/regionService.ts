@@ -3,27 +3,70 @@ import * as Errors from '../errors/customErrors';
 
 const { RegionNotFoundError, RegionServerError } = Errors;
 
-export async function createRegion(name: string, user: string) {
+export async function createRegion(name: string, user: string, coordinates: [number, number]) {
     try {
-        return await RegionModel.create({ name, user });
+        coordinates.reverse(); // reverse coordinates because mongo geolocation requires inverse
+
+        return await RegionModel.create({ name, user, coordinates });
     } catch (error) {
         console.error('Error creating region:', error);
         throw new RegionServerError();
     }
 }
 
-export async function getAllRegions() {
+export async function getAllRegions(query: any) {
     try {
-        return await RegionModel.find();
+        const { centerCoordinates, maxDistance, userId } = query;
+        let filter: any = {};
+
+        if (centerCoordinates && maxDistance) {
+            filter.coordinates = {
+                $near: {
+                    $geometry: {
+                        type: 'Point',
+                        coordinates: centerCoordinates.split(',').map(Number),
+                    },
+                    $maxDistance: maxDistance,
+                },
+            };
+        }
+
+        if (userId) {
+            filter.user = { $ne: userId }; // $ne: not equal
+        }
+
+        const regions = await RegionModel.find(filter).populate('user');
+        return regions;
     } catch (error) {
         console.error('Error fetching regions:', error);
         throw new RegionServerError();
     }
 }
 
+export async function getAllRegionsOnSpot(coordinates: string) {
+    try {
+        const regions = await RegionModel.find({
+            coordinates: {
+                $near: {
+                    $geometry: {
+                        type: 'Point',
+                        coordinates: coordinates.split(',').map(Number),
+                    },
+                },
+            },
+        }).populate('user');
+
+        return regions;
+    } catch (error) {
+        console.error('Error fetching regions by coordinates:', error);
+        throw new RegionServerError();
+    }
+}
+
+
 export async function getRegionById(regionId: string) {
     try {
-        const region = await RegionModel.findById(regionId);
+        const region = await RegionModel.findById(regionId).populate('user');
 
         if (!region) {
             throw new RegionNotFoundError();
@@ -36,11 +79,11 @@ export async function getRegionById(regionId: string) {
     }
 }
 
-export async function updateRegionById(regionId: string, name: string, user: string) {
+export async function updateRegionById(regionId: string, name: string, user: string, coordinates: [number, number]) {
     try {
         const updatedRegion = await RegionModel.findByIdAndUpdate(
             regionId,
-            { name, user },
+            { name, user, coordinates },
             { new: true }
         );
 
