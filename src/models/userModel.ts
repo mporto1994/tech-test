@@ -37,10 +37,10 @@ export class User {
     @Prop({ required: true })
     email!: string;
 
-    @Prop({ required: true })
+    @Prop()
     address: string;
 
-    @Prop({ required: true, type: () => [Number] })
+    @Prop({ type: () => [Number] })
     coordinates: [number, number];
 
     @Prop({ required: true, default: [], ref: () => Region, type: () => String })

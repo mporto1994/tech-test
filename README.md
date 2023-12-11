@@ -67,3 +67,6 @@ Em um mundo conectado e globalizado, a geolocalização se torna cada vez mais e
 
 Estamos ansiosos para ver sua implementação e criatividade em ação! Boa sorte e que a força do código esteja com você! 🚀
 
+PARA RODAR O PROJETO
+
+docker-compose up --build
