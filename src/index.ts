@@ -1,21 +1,5 @@
 import app from './app';
 import connectToDatabase from './database';
-import userRouter from './routes/user.routes';
-import regionRouter from './routes/region.routes';
-import express from 'express';
-
-dotenv.config();
-
-const app = express();
-app.use(express.json());
-
-app.get('/', (req, res) => {
-    res.send('Welcome to OzMap Tech Test API! Pleas use one of the routes: /api/users, /api/regions');
-});
-
-app.use('/api/users', userRouter);
-app.use('/api/regions', regionRouter);
-
 
 async function startApp() {
     try {

@@ -1,3 +1,6 @@
+/**
+ * @swagger
+ */
 import express from 'express';
 import * as regionController from '../controllers/regionController';
 
