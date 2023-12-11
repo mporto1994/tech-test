@@ -238,6 +238,13 @@
   "resolved" "https://registry.npmjs.org/@types/webidl-conversions/-/webidl-conversions-7.0.3.tgz"
   "version" "7.0.3"
 
+"@types/whatwg-url@^11.0.2":
+  "integrity" "sha512-z1ELvMijRL1QmU7QuzDkeYXSF2+dXI0ITKoQsIoVKcNBOiK5RMmWy+pYYxJTHFt8vkpZe7UsvRErQwcxZkjoUw=="
+  "resolved" "https://registry.npmjs.org/@types/whatwg-url/-/whatwg-url-11.0.3.tgz"
+  "version" "11.0.3"
+  dependencies:
+    "@types/webidl-conversions" "*"
+
 "@types/whatwg-url@^8.2.1":
   "integrity" "sha512-FtQu10RWgn3D9U4aazdwIE2yzphmTJREDqNdODHrbrZmmMqI0vMheC/6NE/J1Yveaj8H+ela+YwWTjq5PGmuhA=="
   "resolved" "https://registry.npmjs.org/@types/whatwg-url/-/whatwg-url-8.2.2.tgz"
@@ -431,6 +438,11 @@
   "integrity" "sha512-ix0EwukN2EpC0SRWIj/7B5+A6uQMQy6KMREI9qQqvgpkV2frH63T0UDVd1SYedL6dNCmDBYB3QtXi4ISk9YT+g=="
   "resolved" "https://registry.npmjs.org/bson/-/bson-5.5.1.tgz"
   "version" "5.5.1"
+
+"bson@^6.2.0":
+  "integrity" "sha512-ID1cI+7bazPDyL9wYy9GaQ8gEEohWvcUl/Yf0dIdutJxnmInEEyCsb4awy/OiBfall7zBA179Pahi3vCdFze3Q=="
+  "resolved" "https://registry.npmjs.org/bson/-/bson-6.2.0.tgz"
+  "version" "6.2.0"
 
 "bytes@3.1.2":
   "integrity" "sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg=="
@@ -1294,6 +1306,23 @@
     "@types/whatwg-url" "^8.2.1"
     "whatwg-url" "^11.0.0"
 
+"mongodb-connection-string-url@^3.0.0":
+  "integrity" "sha512-t1Vf+m1I5hC2M5RJx/7AtxgABy1cZmIPQRMXw+gEIPn/cZNF3Oiy+l0UIypUwVB5trcWHq3crg2g3uAR9aAwsQ=="
+  "resolved" "https://registry.npmjs.org/mongodb-connection-string-url/-/mongodb-connection-string-url-3.0.0.tgz"
+  "version" "3.0.0"
+  dependencies:
+    "@types/whatwg-url" "^11.0.2"
+    "whatwg-url" "^13.0.0"
+
+"mongodb@^6.3.0":
+  "integrity" "sha512-tt0KuGjGtLUhLoU263+xvQmPHEGTw5LbcNC73EoFRYgSHwZt5tsoJC110hDyO1kjQzpgNrpdcSza9PknWN4LrA=="
+  "resolved" "https://registry.npmjs.org/mongodb/-/mongodb-6.3.0.tgz"
+  "version" "6.3.0"
+  dependencies:
+    "@mongodb-js/saslprep" "^1.1.0"
+    "bson" "^6.2.0"
+    "mongodb-connection-string-url" "^3.0.0"
+
 "mongodb@5.9.1":
   "integrity" "sha512-NBGA8AfJxGPeB12F73xXwozt8ZpeIPmCUeWRwl9xejozTXFes/3zaep9zhzs1B/nKKsw4P3I4iPfXl3K7s6g+Q=="
   "resolved" "https://registry.npmjs.org/mongodb/-/mongodb-5.9.1.tgz"
@@ -1515,7 +1544,7 @@
   "resolved" "https://registry.npmjs.org/pstree.remy/-/pstree.remy-1.1.8.tgz"
   "version" "1.1.8"
 
-"punycode@^2.1.0", "punycode@^2.1.1":
+"punycode@^2.1.0", "punycode@^2.1.1", "punycode@^2.3.0":
   "integrity" "sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg=="
   "resolved" "https://registry.npmjs.org/punycode/-/punycode-2.3.1.tgz"
   "version" "2.3.1"
@@ -1845,6 +1874,13 @@
   dependencies:
     "punycode" "^2.1.1"
 
+"tr46@^4.1.1":
+  "integrity" "sha512-2lv/66T7e5yNyhAAC4NaKe5nVavzuGJQVVtRYLyQ2OI8tsJ61PMLlelehb0wi2Hx6+hT/OJUWZcw8MjlSRnxvw=="
+  "resolved" "https://registry.npmjs.org/tr46/-/tr46-4.1.1.tgz"
+  "version" "4.1.1"
+  dependencies:
+    "punycode" "^2.3.0"
+
 "ts-node@^10.9.1":
   "integrity" "sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw=="
   "resolved" "https://registry.npmjs.org/ts-node/-/ts-node-10.9.1.tgz"
@@ -1961,6 +1997,14 @@
   "version" "11.0.0"
   dependencies:
     "tr46" "^3.0.0"
+    "webidl-conversions" "^7.0.0"
+
+"whatwg-url@^13.0.0":
+  "integrity" "sha512-9WWbymnqj57+XEuqADHrCJ2eSXzn8WXIW/YSGaZtb2WKAInQ6CHfaUUcTyyver0p8BDg5StLQq8h1vtZuwmOig=="
+  "resolved" "https://registry.npmjs.org/whatwg-url/-/whatwg-url-13.0.0.tgz"
+  "version" "13.0.0"
+  dependencies:
+    "tr46" "^4.1.1"
     "webidl-conversions" "^7.0.0"
 
 "workerpool@6.2.1":
