@@ -1,11 +1,18 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-const env = {
-  MONGO_URI: 'mongodb://root:example@127.0.0.1:27021/oz-tech-test?authSource=admin',
-};
+async function connectToDatabase() {
+  try {
+    const mongoURL = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}/?retryWrites=true&w=majority`;
 
-const init = async function() {
-  await mongoose.connect(env.MONGO_URI);
-};
+    await mongoose.connect(mongoURL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
 
-export default init();
+    console.log('Conectado ao MongoDB!');
+  } catch (error) {
+    console.error('Erro ao conectar ao MongoDB:', error);
+    throw error;
+  }
+}
+export default connectToDatabase;
