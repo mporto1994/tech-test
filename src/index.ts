@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import connectToDatabase from './database';
 import userRouter from './routes/user.routes';
+import regionRouter from './routes/region.routes';
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/users', userRouter);
+app.use('/api/regions', regionRouter);
 
 
 async function startApp() {

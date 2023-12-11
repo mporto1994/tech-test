@@ -1,51 +1,114 @@
+import * as Errors from '../errors/customErrors';
 import { UserModel } from '../models';
-import { DocumentType } from '@typegoose/typegoose';
 
-export async function createUser(name: string, email: string, address: string, coordinates: [number, number]) {
+const { UserNotFoundError, InvalidInputError, DuplicateUserError, InternalServerError, CustomError } = Errors;
+
+export async function createUser(userData: {
+    name: string, email: string, address?: string, coordinates?: [number, number];
+}) {
     try {
-        return await UserModel.create({ name, email, address, coordinates });
+        if (!userData.name || !userData.email) {
+            throw new InvalidInputError('Name and email are required');
+        }
+
+        const existingUser = await UserModel.findOne({ email: userData.email });
+
+        if (existingUser) {
+            throw new DuplicateUserError('User with this email already exists');
+        }
+
+        return await UserModel.create(userData);
     } catch (error) {
-        console.error('Erro ao criar usuário:', error);
-        throw new Error('Erro interno do servidor');
+        if (error instanceof CustomError) {
+            throw error;
+        } else {
+            console.error('Error creating user:', error);
+            throw new InternalServerError('Internal server error');
+        }
     }
 }
 
-export async function getAllUsers() {
+export async function getAllUsers(page: number, limit: number) {
     try {
-        return await UserModel.find();
+        const users = await UserModel.find()
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        const total = await UserModel.countDocuments();
+
+        return {
+            rows: users,
+            page,
+            limit,
+            total,
+        };
     } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
-        throw new Error('Erro interno do servidor');
+        console.error('Error fetching users:', error);
+        throw new InternalServerError('Internal server error');
     }
 }
 
 export async function getUserById(userId: string) {
     try {
-        return await UserModel.findById(userId);
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            throw new UserNotFoundError('User not found');
+        }
+
+        return user;
     } catch (error) {
-        console.error('Erro ao buscar usuário por ID:', error);
-        throw new Error('Erro interno do servidor');
+        if (error instanceof CustomError) {
+            throw error;
+        } else {
+            console.error('Error fetching user by ID:', error);
+            throw new InternalServerError('Internal server error');
+        }
     }
 }
 
-export async function updateUserById(userId: string, name: string, email: string, address: string, coordinates: [number, number]) {
+export async function updateUserById(userData: { name: string, email: string, address?: string, coordinates?: [number, number]; }, userId: string) {
     try {
-        return await UserModel.findByIdAndUpdate(
-            userId,
-            { name, email, address, coordinates },
-            { new: true }
-        );
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            throw new UserNotFoundError('User not found');
+        }
+
+        for (const field in userData) {
+            if (userData[field] !== undefined) {
+                user[field] = userData[field];
+            }
+        }
+
+        const updatedUser = await user.save();
+
+        return updatedUser;
     } catch (error) {
-        console.error('Erro ao atualizar usuário por ID:', error);
-        throw new Error('Erro interno do servidor');
+        if (error instanceof CustomError) {
+            throw error;
+        } else {
+            console.error('Error updating user by ID:', error);
+            throw new InternalServerError('Internal server error');
+        }
     }
 }
 
 export async function deleteUserById(userId: string) {
     try {
-        return await UserModel.findByIdAndDelete(userId);
+        const deletedUser = await UserModel.findByIdAndDelete(userId);
+
+        if (!deletedUser) {
+            throw new UserNotFoundError('User not found');
+        }
+
+        return deletedUser;
     } catch (error) {
-        console.error('Erro ao excluir usuário por ID:', error);
-        throw new Error('Erro interno do servidor');
+        if (error instanceof CustomError) {
+            throw error;
+        } else {
+            console.error('Error deleting user by ID:', error);
+            throw new InternalServerError('Internal server error');
+        }
     }
 }
