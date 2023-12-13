@@ -30,9 +30,10 @@ export class Region {
     @Prop({ required: true })
     name!: string;
 
+    @Prop({ required: true, type: () => [Number] })
+    coordinates: [number, number];
+
     @Prop({ ref: () => User, required: true })
     user: Ref<User>;
 
-    @Prop({ type: () => [Number], index: '2dsphere', required: true })
-    coordinates: [number, number];
 }
