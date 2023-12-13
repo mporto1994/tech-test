@@ -1,13 +1,38 @@
 import { Request, Response } from 'express';
-import { UserModel } from '../models';
+import * as UserService from '../services/userService';
+import * as CustomErrors from '../errors/customErrors';
+import { handleErrors } from '../errors/errorsHandler';
+
+const { InvalidInputError, UserNotFoundError } = CustomErrors;
+
+export async function createUser(req: Request, res: Response) {
+    try {
+        const { name, email, address, coordinates } = req.body;
+
+        if (!name || !email) {
+            throw new InvalidInputError('Name and email are required');
+        }
+
+        if (address && coordinates) {
+            throw new InvalidInputError('Just one of address or coordinates needed');
+        }
+
+        const newUser = await UserService.createUser(req.body);
+        res.status(201).json(newUser);
+    } catch (error) {
+        return handleErrors(error, res);
+    }
+}
 
 export async function getAllUsers(req: Request, res: Response) {
     try {
-        const users = await UserModel.find();
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+
+        const users = await UserService.getAllUsers(page, limit);
         res.status(200).json(users);
     } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
-        res.status(500).send('Erro interno do servidor');
+        return handleErrors(error, res);
     }
 }
 
@@ -15,50 +40,32 @@ export async function getUserById(req: Request, res: Response) {
     const userId = req.params.id;
 
     try {
-        const user = await UserModel.findById(userId);
+        const user = await UserService.getUserById(userId);
 
         if (!user) {
-            return res.status(404).json({ message: 'Usuário não encontrado' });
+            throw new UserNotFoundError('User not found');
         }
 
         res.status(200).json(user);
     } catch (error) {
-        console.error('Erro ao buscar usuário por ID:', error);
-        res.status(500).send('Erro interno do servidor');
-    }
-}
-
-export async function createUser(req: Request, res: Response) {
-    const { name, email, address, coordinates } = req.body;
-
-    try {
-        const newUser = await UserModel.create({ name, email, address, coordinates });
-        res.status(201).json(newUser);
-    } catch (error) {
-        console.error('Erro ao criar usuário:', error);
-        res.status(500).send('Erro interno do servidor');
+        return handleErrors(error, res);
     }
 }
 
 export async function updateUserById(req: Request, res: Response) {
     const userId = req.params.id;
-    const { name, email, address, coordinates } = req.body;
+    const { address, coordinates } = req.body;
 
     try {
-        const updatedUser = await UserModel.findByIdAndUpdate(
-            userId,
-            { name, email, address, coordinates },
-            { new: true }
-        );
-
-        if (!updatedUser) {
-            return res.status(404).json({ message: 'Usuário não encontrado' });
+        if (address && coordinates) {
+            throw new InvalidInputError('Just one of address or coordinates needed');
         }
+
+        const updatedUser = await UserService.updateUserById(req.body, userId);
 
         res.status(200).json(updatedUser);
     } catch (error) {
-        console.error('Erro ao atualizar usuário por ID:', error);
-        res.status(500).send('Erro interno do servidor');
+        handleErrors(error, res);
     }
 }
 
@@ -66,15 +73,14 @@ export async function deleteUserById(req: Request, res: Response) {
     const userId = req.params.id;
 
     try {
-        const deletedUser = await UserModel.findByIdAndDelete(userId);
+        const deletedUser = await UserService.deleteUserById(userId);
 
         if (!deletedUser) {
-            return res.status(404).json({ message: 'Usuário não encontrado' });
+            throw new UserNotFoundError('User not found');
         }
 
         res.status(204).send();
     } catch (error) {
-        console.error('Erro ao excluir usuário por ID:', error);
-        res.status(500).send('Erro interno do servidor');
+        return handleErrors(error, res);
     }
 }

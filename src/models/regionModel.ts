@@ -35,4 +35,5 @@ export class Region {
 
     @Prop({ ref: () => User, required: true })
     user: Ref<User>;
+
 }
